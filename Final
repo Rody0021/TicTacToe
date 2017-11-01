@@ -4,16 +4,22 @@
 		       "   ---+---+---\n"
 	      	       " 2    |   |   \n"
 	     	       "   ---+---+---\n"
-	               " 3    |   |   \n" 
-	               askMove: .asciiz "Player   insert move:"
-	               occupiedSpace: .asciiz "Space already occupied\n"   
-	               invalidMove: .asciiz "Invalid Move" 
-	               x: .asciiz  "X"
-	 	       o: .asciiz "O"   
-	 	      won: .asciiz "\nPlayer   Won! \n"
-	 	      gameMenu: .asciiz "\n\nChoose an option:\n[1] New Game\t[99] Quit\nOption: "
+	               " 3    |   |   \n"
+	
+	 
+	 		
+	 		player_move: .space 9
+         		x: .asciiz "X"
+	 		o: .asciiz "O"   
+	 		askMove: .asciiz "Player\t  insert move\n"
+	 		invalidMove: .asciiz "Invalid Move"
+	 		occupiedSpace: .asciiz "Space already occupied\n"    
+	 		won: .asciiz "\nPlayer   Won! \n"
+	 		tie: .asciiz  "\nTie!!!"
+	 		gameMenu: .asciiz "\n\nChoose an option:\n[1] New Game\t[99] Quit\nOption: "
 	 		clean: .byte ' '
-			player_move: .space 9
+	 		
+			
 	   
 .text
 
@@ -53,11 +59,15 @@ PrintBoard:
 			la $a0, Board
 			syscall
 
-			add $s5, $s5, 1
+			beq $s5, 9, Tie
 
+			add $s5, $s5, 1
+			
+			
 			rem $t0, $s0, 2
 			add $s0, $s0, 1
 			bnez $t0, OPlayer
+			bnez $t0, XPlayer
 			
 XPlayer:
 			lb $a1, x
@@ -72,12 +82,11 @@ OPlayer:
 Play:
 			li $v0, 4
 			la $a0, askMove
-			
-			
 			syscall
 
-			
-			
+			li $v0, 5
+			syscall
+			move $s6, $v0
 
 			beq $s6, 11, J11
 			beq $s6, 21, J21
@@ -260,16 +269,20 @@ CheckVictory:
 			and $s7, $s7, $t3
 			bnez $s7, Victory
 			j PrintBoard
-
+Tie:
+			li $v0, 4
+			la $a0, tie
+			syscall
 Victory:
 			li $v0, 4
 			la $a0, PrintBoard
 			
-
 			li $v0, 4
 			la $a0, won
 			syscall
-#Credit to Daylin Ettles and Johny Do
+
+	
+			
 music:
  			li $a0, 1
   			li $a1, 100 #1000 is 1sec

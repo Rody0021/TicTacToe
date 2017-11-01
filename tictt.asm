@@ -209,7 +209,8 @@ Occupied:
 			li $v0, 4
 			la $a0, occupiedSpace
 			syscall
-			j Play			
+			j Play		
+				
 			
 	
 			
